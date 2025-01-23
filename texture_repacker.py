@@ -1,9 +1,8 @@
 import os
 import json
 import tkinter as tk
-from tkinter import filedialog, Message
+from tkinter import filedialog, messagebox
 from tkinter.ttk import Progressbar
-from tkinter import messagebox
 
 output_path = ""
 textures_path = os.getcwd()+"/textures/"
@@ -30,6 +29,8 @@ def get_output_dir():
     else:
         pack_button["state"] = tk.ACTIVE
     output_path += "/vincedata/"
+    pathtext.config(text=output_path)
+    root.update()
 
 
 def get_level_data(data):
@@ -113,7 +114,6 @@ def construct_raw_data(padding):
     textureprogress['value'] = 0
     for texture in texture_list:
         texturedetail.config(text=texture)
-        textureprogress['value'] += 1
         root.update()
         if texture.startswith('lightmap'):
             texturepath = textures_path+'lightmaps/'+current_level+'/'+texture
@@ -123,6 +123,7 @@ def construct_raw_data(padding):
             file.seek(128)
             raw_data += file.read()
             raw_data += texture_byte_padding
+        textureprogress['value'] += 1
 
     return raw_data
 
@@ -144,7 +145,6 @@ def pack_textures():
         current_level = area
 
         leveltext.config(text=area)
-        levelprogress['value'] += 1
         root.update()
 
         with open(output_path+get_level_data('path')+"textures.hot", "w+b") as t:
@@ -173,17 +173,24 @@ def pack_textures():
             t.write(len(texture_list).to_bytes(4, byteorder='little'))
 
             print(area+" textures created with "+str(texture_list.__len__())+" textures")
+            levelprogress['value'] += 1
 
     pack_button['state'] = tk.ACTIVE
+    path_button['state'] = tk.ACTIVE
+    levelprogress['value'] = 0
+    textureprogress['value'] = 0
+    leveltext.config(text="Done!")
+    texturedetail.config(text="")
     root.update()
 
 root = tk.Tk()
-width = 500
-height = 200
+width = 400
+height = 220
 root.geometry(str(width)+"x"+str(height))
 root.title("Chameleon's Texture Repacker")
 
 path_button = tk.Button(root, text="choose game folder..", command=get_output_dir)
+pathtext = tk.Label(root, text=output_path)
 pack_button = tk.Button(root, text="Repack", command=pack_textures)
 pack_button['state'] = tk.DISABLED
 leveltext = tk.Label(root, text="")
@@ -194,6 +201,7 @@ spacer = tk.Label(root, text="")
 
 
 path_button.pack(pady=10)
+pathtext.pack()
 pack_button.pack(pady=10)
 levelprogress.pack()
 leveltext.pack()
