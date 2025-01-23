@@ -1,6 +1,6 @@
 {
   "area_voodooshop": {
-    "path": "\\levels\\voodooshop\\area_voodooshop\\",
+    "path": "/levels/voodooshop/area_voodooshop/",
     "mystery_numbers": [
       16,
       36,
@@ -1265,7 +1265,7 @@
     ]
   },
   "area_courtyard": {
-    "path": "\\levels\\frenchquarter\\area_courtyard\\",
+    "path": "/levels/frenchquarter/area_courtyard/",
     "mystery_numbers": [
       16,
       36,
@@ -2660,7 +2660,7 @@
     ]
   },
   "area_bigpig": {
-    "path": "\\levels\\frenchquarter\\area_bigpig\\",
+    "path": "/levels/frenchquarter/area_bigpig/",
     "mystery_numbers": [
       16,
       36,
@@ -3869,7 +3869,7 @@
     ]
   },
   "area_mainstreet": {
-    "path": "\\levels\\frenchquarter\\area_mainstreet\\",
+    "path": "/levels/frenchquarter/area_mainstreet/",
     "mystery_numbers": [
       16,
       36,
@@ -5256,7 +5256,7 @@
     ]
   },
   "area_thesquare": {
-    "path": "\\levels\\frenchquarter\\area_thesquare\\",
+    "path": "/levels/frenchquarter/area_thesquare/",
     "mystery_numbers": [
       16,
       36,
@@ -6679,7 +6679,7 @@
     ]
   },
   "area_museum": {
-    "path": "\\levels\\frenchquarter\\area_museum\\",
+    "path": "/levels/frenchquarter/area_museum/",
     "mystery_numbers": [
       16,
       36,
@@ -7634,7 +7634,7 @@
     ]
   },
   "area_wrathofjanice": {
-    "path": "\\levels\\sewers\\area_wrathofjanice\\",
+    "path": "/levels/sewers/area_wrathofjanice/",
     "mystery_numbers": [
       16,
       36,
@@ -8757,7 +8757,7 @@
     ]
   },
   "area_maintunnel": {
-    "path": "\\levels\\sewers\\area_maintunnel\\",
+    "path": "/levels/sewers/area_maintunnel/",
     "mystery_numbers": [16,
       36,
       56,
@@ -9924,7 +9924,7 @@
     ]
   },
   "area_propellerroom": {
-    "path": "\\levels\\sewers\\area_propellerroom\\",
+    "path": "/levels/sewers/area_propellerroom/",
     "mystery_numbers": [
       16,
       36,
@@ -11075,7 +11075,7 @@
     ]
   },
   "area_rocketlab": {
-    "path": "\\levels\\sewers\\area_rocketlab\\",
+    "path": "/levels/sewers/area_rocketlab/",
     "mystery_numbers": [
       16,
       36,
@@ -12046,7 +12046,7 @@
     ]
   },
   "area_throttleup": {
-    "path": "\\levels\\sewers\\area_throttleup\\",
+    "path": "/levels/sewers/area_throttleup/",
     "mystery_numbers": [
       16,
       36,
@@ -12957,7 +12957,7 @@
     ]
   },
   "area_stealthroom": {
-    "path": "\\levels\\sewers\\area_stealthroom\\",
+    "path": "/levels/sewers/area_stealthroom/",
     "mystery_numbers": [
       16,
       36,
@@ -14102,7 +14102,7 @@
     ]
   },
   "area_basketcase": {
-    "path": "\\levels\\sewers\\area_basketcase\\",
+    "path": "/levels/sewers/area_basketcase/",
     "mystery_numbers": [
       16,
       36,
@@ -15161,7 +15161,7 @@
     ]
   },
   "area_gatekeeperjam": {
-    "path": "\\levels\\cryptcity\\area_gatekeeperjam\\",
+    "path": "/levels/cryptcity/area_gatekeeperjam/",
     "mystery_numbers": [
       16,
       36,
@@ -16390,7 +16390,7 @@
     ]
   },
   "area_sarcophagushustle": {
-    "path": "\\levels\\cryptcity\\area_sarcophagushustle\\",
+    "path": "/levels/cryptcity/area_sarcophagushustle/",
     "mystery_numbers": [
       16,
       36,
@@ -17815,7 +17815,7 @@
     ]
   },
   "area_zombieguidancecounselor": {
-    "path": "\\levels\\cryptcity\\area_zombieguidancecounselor\\",
+    "path": "/levels/cryptcity/area_zombieguidancecounselor/",
     "mystery_numbers": [
       16,
       36,
@@ -19008,7 +19008,7 @@
     ]
   },
   "area_gwistlethorpemausoleum": {
-    "path": "\\levels\\cryptcity\\area_gwistlethorpemausoleum\\",
+    "path": "/levels/cryptcity/area_gwistlethorpemausoleum/",
     "mystery_numbers": [
       16,
       36,
@@ -20329,7 +20329,7 @@
     ]
   },
   "area_ratracerodeo": {
-    "path": "\\levels\\cryptcity\\area_ratracerodeo\\",
+    "path": "/levels/cryptcity/area_ratracerodeo/",
     "mystery_numbers": [
       16,
       36,
@@ -21340,7 +21340,7 @@
     ]
   },
   "area_boltroidbattle": {
-    "path": "\\levels\\manorhouse\\area_boltroidbattle\\",
+    "path": "/levels/manorhouse/area_boltroidbattle/",
     "mystery_numbers": [
       16,
       36,
@@ -22397,7 +22397,7 @@
     ]
   },
   "area_captainsroom": {
-    "path": "\\levels\\manorhouse\\area_captainsroom\\",
+    "path": "/levels/manorhouse/area_captainsroom/",
     "mystery_numbers": [
       16,
       36,
@@ -23420,7 +23420,7 @@
     ]
   },
   "area_frontporch": {
-    "path": "\\levels\\manorhouse\\area_frontporch\\",
+    "path": "/levels/manorhouse/area_frontporch/",
     "mystery_numbers": [
       16,
       36,
@@ -24543,7 +24543,7 @@
     ]
   },
   "area_glowberrytangle": {
-    "path": "\\levels\\manorhouse\\area_glowberrytangle\\",
+    "path": "/levels/manorhouse/area_glowberrytangle/",
     "mystery_numbers": [
       16,
       36,
@@ -25636,7 +25636,7 @@
     ]
   },
   "area_playroom": {
-    "path": "\\levels\\manorhouse\\area_playroom\\",
+    "path": "/levels/manorhouse/area_playroom/",
     "mystery_numbers": [
       16,
       36,
@@ -26813,7 +26813,7 @@
     ]
   },
   "area_tintoyterror": {
-    "path": "\\levels\\manorhouse\\area_tintoyterror\\",
+    "path": "/levels/manorhouse/area_tintoyterror/",
     "mystery_numbers": [
       16,
       36,
@@ -27996,7 +27996,7 @@
     ]
   },
   "area_tumblerroom": {
-    "path": "\\levels\\manorhouse\\area_tumblerroom\\",
+    "path": "/levels/manorhouse/area_tumblerroom/",
     "mystery_numbers": [
       16,
       36,
@@ -29115,7 +29115,7 @@
     ]
   },
   "area_jimmysfanboat": {
-    "path": "\\levels\\bayou\\area_jimmysfanboat\\",
+    "path": "/levels/bayou/area_jimmysfanboat/",
     "mystery_numbers": [
       16,
       36,
@@ -30212,7 +30212,7 @@
     ]
   },
   "area_belowdecks": {
-    "path": "\\levels\\bayou\\area_belowdecks\\",
+    "path": "/levels/bayou/area_belowdecks/",
     "mystery_numbers": [
       16,
       36,
@@ -31327,7 +31327,7 @@
     ]
   },
   "area_crawdadjimmys": {
-    "path": "\\levels\\bayou\\rea_crawdadjimmys\\",
+    "path": "/levels/bayou/rea_crawdadjimmys/",
     "mystery_numbers": [
       16,
       36,
@@ -32710,7 +32710,7 @@
     ]
   },
   "area_earthwoodandwater": {
-    "path": "\\levels\\bayou\\area_earthwoodandwater\\",
+    "path": "/levels/bayou/area_earthwoodandwater/",
     "mystery_numbers": [
       16,
       36,
@@ -33975,7 +33975,7 @@
     ]
   },
   "area_hurricanehannah": {
-    "path": "\\levels\\bayou\\area_hurricanehannah\\",
+    "path": "/levels/bayou/area_hurricanehannah/",
     "mystery_numbers": [
       16,
       36,
@@ -35080,7 +35080,7 @@
     ]
   },
   "area_jeanlafittesship": {
-    "path": "\\levels\\bayou\\area_jeanlafittesship\\",
+    "path": "/levels/bayou/area_jeanlafittesship/",
     "mystery_numbers": [
       16,
       36,
@@ -36285,7 +36285,7 @@
     ]
   },
   "area_thebogwallow": {
-    "path": "\\levels\\bayou\\area_thebogwallow\\",
+    "path": "/levels/bayou/area_thebogwallow/",
     "mystery_numbers": [
       16,
       36,
@@ -37604,7 +37604,7 @@
     ]
   },
   "area_thesausageworks": {
-    "path": "\\levels\\bayou\\area_thesausageworks\\",
+    "path": "/levels/bayou/area_thesausageworks/",
     "mystery_numbers": [
       16,
       36,
@@ -38649,7 +38649,7 @@
     ]
   },
   "area_insidekosmobot": {
-    "path": "\\levels\\carnival\\area_insidekosmobot\\",
+    "path": "/levels/carnival/area_insidekosmobot/",
     "mystery_numbers": [
       16,
       36,
@@ -39800,7 +39800,7 @@
     ]
   },
   "area_scarehouse": {
-    "path": "\\levels\\carnival\\area_scarehouse\\",
+    "path": "/levels/carnival/area_scarehouse/",
     "mystery_numbers": [
       16,
       36,
@@ -40831,7 +40831,7 @@
     ]
   },
   "area_bumpercarbumpoff": {
-    "path": "\\levels\\carnival\\area_bumpercarbumpoff\\",
+    "path": "/levels/carnival/area_bumpercarbumpoff/",
     "mystery_numbers": [
       16,
       36,
@@ -41884,7 +41884,7 @@
     ]
   },
   "area_houseomirrors": {
-    "path": "\\levels\\carnival\\area_houseomirrors\\",
+    "path": "/levels/carnival/area_houseomirrors/",
     "mystery_numbers": [
       16,
       36,
@@ -43009,7 +43009,7 @@
     ]
   },
   "area_landorides": {
-    "path": "\\levels\\carnival\\area_landorides\\",
+    "path": "/levels/carnival/area_landorides/",
     "mystery_numbers": [
       16,
       36,
@@ -44200,7 +44200,7 @@
     ]
   },
   "area_midway": {
-    "path": "\\levels\\carnival\\area_midway\\",
+    "path": "/levels/carnival/area_midway/",
     "mystery_numbers": [
       16,
       36,
