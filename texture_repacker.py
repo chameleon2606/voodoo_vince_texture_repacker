@@ -133,6 +133,7 @@ def pack_textures():
     global filename_table
 
     pack_button['state'] = tk.DISABLED
+    path_button['state'] = tk.DISABLED
     levelprogress.config(maximum=get_level_list().__len__())
 
     if not os.path.exists(textures_path):
@@ -189,12 +190,14 @@ leveltext = tk.Label(root, text="")
 texturedetail = tk.Label(root, text="")
 levelprogress = Progressbar(root, orient=tk.HORIZONTAL, length=width/2)
 textureprogress = Progressbar(root, orient=tk.HORIZONTAL, length=width/2)
+spacer = tk.Label(root, text="")
 
 
 path_button.pack(pady=10)
 pack_button.pack(pady=10)
 levelprogress.pack()
 leveltext.pack()
+spacer.pack()
 textureprogress.pack()
 texturedetail.pack()
 root.mainloop()
