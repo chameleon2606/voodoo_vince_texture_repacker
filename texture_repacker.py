@@ -3,21 +3,20 @@ import json
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from tkinter.ttk import Progressbar
+from math import ceil
 
 output_path = ""
 textures_path = os.getcwd()+"/textures/"
 localpath = os.getcwd()
-os.chdir(textures_path)
-all_textures = sorted(os.listdir(textures_path))
+all_textures = os.listdir(textures_path)
 texture_list = []
+tex_index = []
 current_level = ""
 filename_table = ""
+filemetadata = b''
 
+hot_header_size = 36
 dds_header_size = 128
-
-if not os.path.exists(textures_path):
-    print("textures folder doesn't exist")
-    exit()
 
 
 def get_output_dir():
@@ -48,17 +47,16 @@ def construct_header():
     header = b'HOT \x01\x00\x00\x00'
     header += (36 + ((32 * len(texture_list)) - 8) + len(filename_table)).to_bytes(4, byteorder='little')  # headers offset
     header += (36 + ((32 * len(texture_list)) - 8) + len(filename_table) + (128 * len(texture_list))).to_bytes(4, byteorder='little')  # data offset
-    return header + 20*b'\x00'
+    return header + 20*b'\x00'  # adds 20 blank values as a placeholder
 
 
-def construct_filemetadata(header_bytes):
+def construct_filemetadata():
     mystery_number_array = get_level_data('mystery_numbers')
     fileinfo_table = b''
-    dynamic_offset = 0
     i = 0
     metadata_size = 32
-    headers_offset = len(header_bytes) + ((metadata_size * len(texture_list)) - 8) + len(filename_table)
-    data_offset = headers_offset + (dds_header_size * len(texture_list)) + get_level_data('padding')
+    headers_offset = hot_header_size + ((metadata_size * len(texture_list)) - 8) + len(filename_table)
+    data_offset = headers_offset + (dds_header_size * len(texture_list))
 
     for texture in texture_list:
         if texture.startswith('lightmap'):
@@ -69,12 +67,11 @@ def construct_filemetadata(header_bytes):
         fileinfo_table += (headers_offset + (dds_header_size * i)).to_bytes(4, byteorder='little')  # header offset
         fileinfo_table += os.path.getsize(path+texture).to_bytes(4, byteorder='little')  # file size
         fileinfo_table += b'\x00\x00\x00\x00'  # blank
-        fileinfo_table += (data_offset + dynamic_offset).to_bytes(4, byteorder='little')  # file offset
+        fileinfo_table += (data_offset + tex_index[i]).to_bytes(4, byteorder='little')  # file offset
         fileinfo_table += b'\x00\x00\x00\x00'  # blank
         if i < len(texture_list)-1:
             fileinfo_table += int(mystery_number_array[i]).to_bytes(4, byteorder='little')  # unknown number
             fileinfo_table += b'\x00\x00\x00\x00'  # blank
-            dynamic_offset += (os.path.getsize(path+texture)-dds_header_size+16)
             i += 1
     return fileinfo_table
 
@@ -90,10 +87,14 @@ def construct_filenames():
             byte_padding = texturename_byte_remainder
         file_name_table += bytes(texture, "utf-8")+(b'\x00'*byte_padding)
 
+    offset = 36 + ((32 * len(texture_list)) - 8) + len(file_name_table)
+    file_name_table += b'\x00' * ((ceil(offset / 128) * 128) - offset)
     return file_name_table
 
 
 def construct_file_headers():
+    # todo: place file metadata or raw_data into a good start position
+    # todo: improve this
     file_header_table = b''
     i = 0
     for texture in texture_list:
@@ -104,16 +105,18 @@ def construct_file_headers():
         with open(path+texture, "rb") as file:
             file_header_table += file.read(dds_header_size)
             i += 1
+
+    offset = len(file_header_table)
+    file_header_table += b'\x00' * ((ceil(offset / 128) * 128) - offset)
     return file_header_table
 
 
-def construct_raw_data(padding):
-    texture_byte_padding = 16*b'\x00'
-    raw_data = padding*b'\x00'
+def construct_raw_data():
+    raw_data = b''
     textureprogress.config(maximum=len(texture_list))
     textureprogress['value'] = 0
     for texture in texture_list:
-        texturedetail.config(text=texture)
+        texturedetail.config(text=texture)  # shows what texture is being processed
         root.update()
         if texture.startswith('lightmap'):
             texturepath = textures_path+'lightmaps/'+current_level+'/'+texture
@@ -121,10 +124,11 @@ def construct_raw_data(padding):
             texturepath = textures_path+texture
         with open(texturepath, "rb") as file:
             file.seek(128)
+            tex_index.append(len(raw_data))
             raw_data += file.read()
-            raw_data += texture_byte_padding
+            offset = len(raw_data)
+            raw_data += b'\x00' * ((ceil(offset / 128) * 128) - offset)
         textureprogress['value'] += 1
-
     return raw_data
 
 
@@ -132,6 +136,7 @@ def pack_textures():
     global current_level
     global texture_list
     global filename_table
+    global filemetadata
 
     pack_button['state'] = tk.DISABLED
     path_button['state'] = tk.DISABLED
@@ -149,28 +154,32 @@ def pack_textures():
 
         with open(output_path+get_level_data('path')+"textures.hot", "w+b") as t:
             texture_list.clear()
+            tex_index.clear()
             texture_list = get_level_data('textures')
 
+            raw_data_bytes = construct_raw_data()
             filename_table = construct_filenames()
             header_bytes = construct_header()
             t.write(header_bytes)  # writes header
-            filemetadata = construct_filemetadata(header_bytes)
+            filemetadata = construct_filemetadata()
             t.write(filemetadata)  # writes file info tables
             t.write(filename_table)  # writes filenames table
             fileheaders = construct_file_headers()
             t.write(fileheaders)  # writes fileinfo table
-            raw_data_bytes = construct_raw_data(get_level_data('padding'))
             t.write(raw_data_bytes)
 
-            totalsize = len(header_bytes + filemetadata + filename_table + fileheaders + raw_data_bytes)
+            t.seek(8)
+            t.write((len(header_bytes)+len(filemetadata)+len(filename_table)).to_bytes(4, byteorder='little'))
+
+            totalsize = len(header_bytes + filemetadata + filename_table + fileheaders + raw_data_bytes)  # writes the total size into the header
             t.seek(16)
             t.write(totalsize.to_bytes(4, byteorder='little'))
 
             t.seek(20)
-            t.write((len(header_bytes + filemetadata)).to_bytes(4, byteorder='little'))
+            t.write((len(header_bytes + filemetadata)).to_bytes(4, byteorder='little'))  # writes the offset of the filename table
 
             t.seek(24)
-            t.write(len(texture_list).to_bytes(4, byteorder='little'))
+            t.write(len(texture_list).to_bytes(4, byteorder='little'))  # writes the amount of textures
 
             print(area+" textures created with "+str(texture_list.__len__())+" textures")
             levelprogress['value'] += 1
@@ -183,11 +192,13 @@ def pack_textures():
     texturedetail.config(text="")
     root.update()
 
+
 root = tk.Tk()
 width = 400
 height = 220
 root.geometry(str(width)+"x"+str(height))
 root.title("Chameleon's Texture Repacker")
+
 
 path_button = tk.Button(root, text="choose game folder..", command=get_output_dir)
 pathtext = tk.Label(root, text=output_path)
@@ -199,6 +210,10 @@ levelprogress = Progressbar(root, orient=tk.HORIZONTAL, length=width/2)
 textureprogress = Progressbar(root, orient=tk.HORIZONTAL, length=width/2)
 spacer = tk.Label(root, text="")
 
+if not os.path.exists(textures_path):
+    print("textures folder not found!")
+    pack_button['state'] = tk.DISABLED
+    leveltext.config(text="Textures folder not found!")
 
 path_button.pack(pady=10)
 pathtext.pack()

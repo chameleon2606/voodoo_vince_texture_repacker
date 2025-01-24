@@ -631,7 +631,6 @@
       12460,
       12476
     ],
-    "padding": 116,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -1961,7 +1960,6 @@
       13980,
       14004
     ],
-    "padding": 96,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -3263,7 +3261,6 @@
       12172,
       12196
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -4561,7 +4558,6 @@
       13804,
       13828
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -5966,7 +5962,6 @@
       14288,
       14312
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -7155,7 +7150,6 @@
       9304,
       9328
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -8194,7 +8188,6 @@
       11180,
       11204
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -8758,7 +8751,8 @@
   },
   "area_maintunnel": {
     "path": "levels/sewers/area_maintunnel/",
-    "mystery_numbers": [16,
+    "mystery_numbers": [
+      16,
       36,
       56,
       76,
@@ -9337,8 +9331,8 @@
       11776,
       11800,
       11820,
-      11844],
-    "padding": 16,
+      11844
+    ],
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -10498,7 +10492,6 @@
       11608,
       11632
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -11559,7 +11552,6 @@
       9548,
       9572
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -12500,7 +12492,6 @@
       8952,
       8976
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -13528,7 +13519,6 @@
       11532,
       11556
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -14630,7 +14620,6 @@
       10528,
       10552
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -15774,7 +15763,6 @@
       12092,
       12116
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -17101,7 +17089,6 @@
       13952,
       13976
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -18410,7 +18397,6 @@
       11768,
       11784
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -19667,7 +19653,6 @@
       13244,
       13268
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -20833,7 +20818,6 @@
       9868,
       9892
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -21867,7 +21851,6 @@
       10524,
       10548
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -22907,7 +22890,6 @@
       10000,
       10024
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -23980,7 +23962,6 @@
       11016,
       11040
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -25088,7 +25069,6 @@
       11152,
       11176
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -26223,7 +26203,6 @@
       11720,
       11744
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -27403,7 +27382,6 @@
       11736,
       11760
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -28554,7 +28532,6 @@
       11080,
       11104
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -29662,7 +29639,6 @@
       10964,
       10988
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -30768,7 +30744,6 @@
       11308,
       11332
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -32017,7 +31992,6 @@
       14056,
       14080
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -33341,7 +33315,6 @@
       12696,
       12720
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -34526,7 +34499,6 @@
       11124,
       11148
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -35681,7 +35653,6 @@
       12352,
       12376
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -36943,7 +36914,6 @@
       13660,
       13684
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -38125,7 +38095,6 @@
       10408,
       10432
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -39223,7 +39192,6 @@
       11772,
       11796
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -40314,7 +40282,6 @@
       10244,
       10260
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -41356,7 +41323,6 @@
       10656,
       10680
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -42445,7 +42411,6 @@
       11252,
       11276
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -43603,7 +43568,6 @@
       12252,
       12276
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
@@ -44828,7 +44792,6 @@
       12788,
       12812
     ],
-    "padding": 16,
     "textures": [
       "00_cloud.dds",
       "00_hollowball.dds",
