@@ -14,8 +14,11 @@ tex_index = []
 current_level = ""
 filename_table = ""
 filemetadata = b''
+file_headers_size = 0
+raw_data_size = 0
 
 hot_header_size = 36
+metadata_size = 32
 dds_header_size = 128
 
 
@@ -45,16 +48,18 @@ def get_level_list():
 
 def construct_header():
     header = b'HOT \x01\x00\x00\x00'
-    header += (36 + ((32 * len(texture_list)) - 8) + len(filename_table)).to_bytes(4, byteorder='little')  # headers offset
-    header += (36 + ((32 * len(texture_list)) - 8) + len(filename_table) + (128 * len(texture_list))).to_bytes(4, byteorder='little')  # data offset
-    return header + 20*b'\x00'  # adds 20 blank values as a placeholder
+    header += (hot_header_size + len(filemetadata) + len(filename_table)).to_bytes(4, byteorder='little')
+    header += (hot_header_size + ((metadata_size * len(texture_list)) - 8) + len(filename_table) + (dds_header_size * len(texture_list))).to_bytes(4, byteorder='little')  # data offset
+    header += (hot_header_size + len(filemetadata) + len(filename_table) + file_headers_size + raw_data_size).to_bytes(4, byteorder='little')  # total size
+    header += (hot_header_size + len(filemetadata)).to_bytes(4, byteorder='little')  # writes the offset of the filename table
+    header += (len(texture_list).to_bytes(4, byteorder='little'))  # writes the amount of textures
+    return header
 
 
 def construct_filemetadata():
     mystery_number_array = get_level_data('mystery_numbers')
     fileinfo_table = b''
     i = 0
-    metadata_size = 32
     headers_offset = hot_header_size + ((metadata_size * len(texture_list)) - 8) + len(filename_table)
     data_offset = headers_offset + (dds_header_size * len(texture_list))
 
@@ -87,14 +92,12 @@ def construct_filenames():
             byte_padding = texturename_byte_remainder
         file_name_table += bytes(texture, "utf-8")+(b'\x00'*byte_padding)
 
-    offset = 36 + ((32 * len(texture_list)) - 8) + len(file_name_table)
+    offset = hot_header_size + ((metadata_size * len(texture_list)) - 8) + len(file_name_table)
     file_name_table += b'\x00' * ((ceil(offset / 128) * 128) - offset)
     return file_name_table
 
 
 def construct_file_headers():
-    # todo: place file metadata or raw_data into a good start position
-    # todo: improve this
     file_header_table = b''
     i = 0
     for texture in texture_list:
@@ -123,7 +126,7 @@ def construct_raw_data():
         else:
             texturepath = textures_path+texture
         with open(texturepath, "rb") as file:
-            file.seek(128)
+            file.seek(dds_header_size)
             tex_index.append(len(raw_data))
             raw_data += file.read()
             offset = len(raw_data)
@@ -137,6 +140,8 @@ def pack_textures():
     global texture_list
     global filename_table
     global filemetadata
+    global file_headers_size
+    global raw_data_size
 
     pack_button['state'] = tk.DISABLED
     path_button['state'] = tk.DISABLED
@@ -158,28 +163,20 @@ def pack_textures():
             texture_list = get_level_data('textures')
 
             raw_data_bytes = construct_raw_data()
+            raw_data_size = len(raw_data_bytes)
             filename_table = construct_filenames()
-            header_bytes = construct_header()
-            t.write(header_bytes)  # writes header
+            t.write(b'\x00'*hot_header_size)  # placeholder for main header
             filemetadata = construct_filemetadata()
             t.write(filemetadata)  # writes file info tables
             t.write(filename_table)  # writes filenames table
             fileheaders = construct_file_headers()
+            file_headers_size = len(fileheaders)
             t.write(fileheaders)  # writes fileinfo table
-            t.write(raw_data_bytes)
+            t.write(raw_data_bytes)  # writes texture data
 
-            t.seek(8)
-            t.write((len(header_bytes)+len(filemetadata)+len(filename_table)).to_bytes(4, byteorder='little'))
-
-            totalsize = len(header_bytes + filemetadata + filename_table + fileheaders + raw_data_bytes)  # writes the total size into the header
-            t.seek(16)
-            t.write(totalsize.to_bytes(4, byteorder='little'))
-
-            t.seek(20)
-            t.write((len(header_bytes + filemetadata)).to_bytes(4, byteorder='little'))  # writes the offset of the filename table
-
-            t.seek(24)
-            t.write(len(texture_list).to_bytes(4, byteorder='little'))  # writes the amount of textures
+            header_bytes = construct_header()
+            t.seek(0)
+            t.write(header_bytes)  # writes header
 
             print(area+" textures created with "+str(texture_list.__len__())+" textures")
             levelprogress['value'] += 1
