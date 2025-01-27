@@ -7,19 +7,23 @@ from math import ceil
 
 output_path = ""
 textures_path = os.getcwd()+"/textures/"
+sounds_path = os.getcwd()+"/sounds/"
+source_files_path = textures_path
 localpath = os.getcwd()
-all_textures = os.listdir(textures_path)
-texture_list = []
-tex_index = []
+level_file_list = []
+data_index = []
 current_level = ""
 filename_table = ""
 filemetadata = b''
 file_headers_size = 0
 raw_data_size = 0
+mystery_numbers = "mystery_dds_numbers"
 
 hot_header_size = 36
 metadata_size = 32
 dds_header_size = 128
+wav_header_size = 72
+current_header_size = 0
 
 
 def get_output_dir():
@@ -49,32 +53,32 @@ def get_level_list():
 def construct_header():
     header = b'HOT \x01\x00\x00\x00'
     header += (hot_header_size + len(filemetadata) + len(filename_table)).to_bytes(4, byteorder='little')
-    header += (hot_header_size + ((metadata_size * len(texture_list)) - 8) + len(filename_table) + (dds_header_size * len(texture_list))).to_bytes(4, byteorder='little')  # data offset
+    header += (hot_header_size + ((metadata_size * len(level_file_list)) - 8) + len(filename_table) + (dds_header_size * len(level_file_list))).to_bytes(4, byteorder='little')  # data offset
     header += (hot_header_size + len(filemetadata) + len(filename_table) + file_headers_size + raw_data_size).to_bytes(4, byteorder='little')  # total size
     header += (hot_header_size + len(filemetadata)).to_bytes(4, byteorder='little')  # writes the offset of the filename table
-    header += (len(texture_list).to_bytes(4, byteorder='little'))  # writes the amount of textures
+    header += (len(level_file_list).to_bytes(4, byteorder='little'))  # writes the amount of textures or sounds
     return header
 
 
 def construct_filemetadata():
-    mystery_number_array = get_level_data('mystery_numbers')
+    mystery_number_array = get_level_data(mystery_numbers)
     fileinfo_table = b''
     i = 0
-    headers_offset = hot_header_size + ((metadata_size * len(texture_list)) - 8) + len(filename_table)
-    data_offset = headers_offset + (dds_header_size * len(texture_list))
+    headers_offset = hot_header_size + ((metadata_size * len(level_file_list)) - 8) + len(filename_table)
+    data_offset = headers_offset + (dds_header_size * len(level_file_list))
 
-    for texture in texture_list:
-        if texture.startswith('lightmap'):
-            path = textures_path+'lightmaps/'+current_level+'/'
+    for file in level_file_list:
+        if file.startswith('lightmap'):
+            path = source_files_path+'lightmaps/'+current_level+'/'
         else:
-            path = textures_path
+            path = source_files_path
         fileinfo_table += dds_header_size.to_bytes(4, byteorder='little')  # header size
         fileinfo_table += (headers_offset + (dds_header_size * i)).to_bytes(4, byteorder='little')  # header offset
-        fileinfo_table += os.path.getsize(path+texture).to_bytes(4, byteorder='little')  # file size
+        fileinfo_table += os.path.getsize(path+file).to_bytes(4, byteorder='little')  # file size
         fileinfo_table += b'\x00\x00\x00\x00'  # blank
-        fileinfo_table += (data_offset + tex_index[i]).to_bytes(4, byteorder='little')  # file offset
+        fileinfo_table += (data_offset + data_index[i]).to_bytes(4, byteorder='little')  # file offset
         fileinfo_table += b'\x00\x00\x00\x00'  # blank
-        if i < len(texture_list)-1:
+        if i < len(level_file_list)-1:
             fileinfo_table += int(mystery_number_array[i]).to_bytes(4, byteorder='little')  # unknown number
             fileinfo_table += b'\x00\x00\x00\x00'  # blank
             i += 1
@@ -84,15 +88,15 @@ def construct_filemetadata():
 def construct_filenames():
     file_name_table = b''
 
-    for texture in texture_list:
-        texturename_byte_remainder = -len(bytes(texture, "utf-8")) % 4
-        if texturename_byte_remainder == 0:
+    for file in level_file_list:
+        filename_byte_remainder = -len(bytes(file, "utf-8")) % 4
+        if filename_byte_remainder == 0:
             byte_padding = 4
         else:
-            byte_padding = texturename_byte_remainder
-        file_name_table += bytes(texture, "utf-8")+(b'\x00'*byte_padding)
+            byte_padding = filename_byte_remainder
+        file_name_table += bytes(file, "utf-8")+(b'\x00'*byte_padding)
 
-    offset = hot_header_size + ((metadata_size * len(texture_list)) - 8) + len(file_name_table)
+    offset = hot_header_size + ((metadata_size * len(level_file_list)) - 8) + len(file_name_table)
     file_name_table += b'\x00' * ((ceil(offset / 128) * 128) - offset)
     return file_name_table
 
@@ -100,13 +104,13 @@ def construct_filenames():
 def construct_file_headers():
     file_header_table = b''
     i = 0
-    for texture in texture_list:
-        if texture.startswith('lightmap'):
-            path = textures_path+'lightmaps/'+current_level+'/'
+    for file in level_file_list:
+        if file.startswith('lightmap'):
+            path = source_files_path+'lightmaps/'+current_level+'/'
         else:
-            path = textures_path
-        with open(path+texture, "rb") as file:
-            file_header_table += file.read(dds_header_size)
+            path = source_files_path
+        with open(path+file, "rb") as src_file:
+            file_header_table += src_file.read(dds_header_size)
             i += 1
 
     offset = len(file_header_table)
@@ -116,28 +120,43 @@ def construct_file_headers():
 
 def construct_raw_data():
     raw_data = b''
-    textureprogress.config(maximum=len(texture_list))
-    textureprogress['value'] = 0
-    for texture in texture_list:
-        texturedetail.config(text=texture)  # shows what texture is being processed
+    fileprogress.config(maximum=len(level_file_list))
+    fileprogress['value'] = 0
+    for file in level_file_list:
+        current_file_text.config(text=file)  # shows what texture or sound is being processed
         root.update()
-        if texture.startswith('lightmap'):
-            texturepath = textures_path+'lightmaps/'+current_level+'/'+texture
+        if file.startswith('lightmap'):
+            src_file_path = source_files_path+'lightmaps/'+current_level+'/'+file
         else:
-            texturepath = textures_path+texture
-        with open(texturepath, "rb") as file:
-            file.seek(dds_header_size)
-            tex_index.append(len(raw_data))
-            raw_data += file.read()
+            src_file_path = source_files_path+file
+        with open(src_file_path, "rb") as src_file:
+            src_file.seek(dds_header_size)
+            data_index.append(len(raw_data))
+            raw_data += src_file.read()
             offset = len(raw_data)
             raw_data += b'\x00' * ((ceil(offset / 128) * 128) - offset)
-        textureprogress['value'] += 1
+        fileprogress['value'] += 1
     return raw_data
 
 
-def pack_textures():
+def selection_changed():
+    global current_header_size
+    global source_files_path
+    global mystery_numbers
+    print(radio_buttons.get())
+    if radio_buttons.get() == 'textures':
+        current_header_size = dds_header_size
+        source_files_path = textures_path
+        mystery_numbers = 'mystery_dds_numbers'
+    else:
+        current_header_size = wav_header_size
+        source_files_path = sounds_path
+        mystery_numbers = 'mystery_wav_numbers'
+
+
+def pack_files():
     global current_level
-    global texture_list
+    global level_file_list
     global filename_table
     global filemetadata
     global file_headers_size
@@ -147,20 +166,30 @@ def pack_textures():
     path_button['state'] = tk.DISABLED
     levelprogress.config(maximum=get_level_list().__len__())
 
-    if not os.path.exists(textures_path):
+    if not os.path.exists(textures_path) and radio_buttons.get() == 'textures':
         messagebox.showwarning("Error", "Textures folder not found!")
+        return
+    if not os.path.exists(sounds_path) and radio_buttons.get() == 'sounds':
+        messagebox.showwarning("Error", "Sounds folder not found!")
         return
 
     for area in get_level_list():
+        if radio_buttons.get() == 'textures':
+            if not area.startswith('area'):
+                continue
         current_level = area
 
         leveltext.config(text=area)
         root.update()
 
-        with open(output_path+get_level_data('path')+"textures.hot", "w+b") as t:
-            texture_list.clear()
-            tex_index.clear()
-            texture_list = get_level_data('textures')
+        # if not os.path.exists(output_path+get_level_data('path')):
+        #     os.makedirs(output_path+get_level_data('path'))
+
+        with open(output_path+get_level_data('path')+radio_buttons.get()+".hot", "w+b") as t:
+
+            level_file_list.clear()
+            data_index.clear()
+            level_file_list = get_level_data(radio_buttons.get())
 
             raw_data_bytes = construct_raw_data()
             raw_data_size = len(raw_data_bytes)
@@ -178,46 +207,53 @@ def pack_textures():
             t.seek(0)
             t.write(header_bytes)  # writes header
 
-            print(area+" textures created with "+str(texture_list.__len__())+" textures")
+            print(area + " " + radio_buttons.get() + " created with " + str(len(level_file_list)) + " "+radio_buttons.get())
             levelprogress['value'] += 1
 
     pack_button['state'] = tk.ACTIVE
     path_button['state'] = tk.ACTIVE
     levelprogress['value'] = 0
-    textureprogress['value'] = 0
+    fileprogress['value'] = 0
     leveltext.config(text="Done!")
-    texturedetail.config(text="")
+    current_file_text.config(text="")
     root.update()
 
 
 root = tk.Tk()
 width = 400
-height = 220
+height = 300
 root.geometry(str(width)+"x"+str(height))
-root.title("Chameleon's Texture Repacker")
+root.title("Chameleon's textures and sounds Repacker")
 
 
 path_button = tk.Button(root, text="choose game folder..", command=get_output_dir)
+radio_buttons = tk.StringVar(value='textures')
+r1 = tk.Radiobutton(root, text="Repack textures", variable=radio_buttons, value='textures', command=selection_changed)
+r2 = tk.Radiobutton(root, text="Repack sounds", variable=radio_buttons, value='sounds', command=selection_changed)
 pathtext = tk.Label(root, text=output_path)
-pack_button = tk.Button(root, text="Repack", command=pack_textures)
+pack_button = tk.Button(root, text="Repack", command=pack_files)
 pack_button['state'] = tk.DISABLED
 leveltext = tk.Label(root, text="")
-texturedetail = tk.Label(root, text="")
+current_file_text = tk.Label(root, text="")
 levelprogress = Progressbar(root, orient=tk.HORIZONTAL, length=width/2)
-textureprogress = Progressbar(root, orient=tk.HORIZONTAL, length=width/2)
+fileprogress = Progressbar(root, orient=tk.HORIZONTAL, length=width / 2)
 spacer = tk.Label(root, text="")
 
-if not os.path.exists(textures_path):
-    print("textures folder not found!")
+if not os.path.exists(textures_path) and radio_buttons.get() == 'textures':
     pack_button['state'] = tk.DISABLED
     leveltext.config(text="Textures folder not found!")
+if not os.path.exists(sounds_path) and radio_buttons.get() == 'sounds':
+    pack_button['state'] = tk.DISABLED
+    leveltext.config(text="Sounds folder not found!")
 
 path_button.pack(pady=10)
+r1.pack()
+r2.pack()
 pathtext.pack()
 pack_button.pack(pady=10)
 levelprogress.pack()
 leveltext.pack()
 spacer.pack()
-textureprogress.pack()
-texturedetail.pack()
+fileprogress.pack()
+current_file_text.pack()
 root.mainloop()
