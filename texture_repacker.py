@@ -5,6 +5,9 @@ from tkinter import filedialog, messagebox
 from tkinter.ttk import Progressbar
 from math import ceil
 
+# todo file validation
+# todo specific error messages
+
 output_path = ""
 textures_path = os.getcwd()+"/textures/"
 sounds_path = os.getcwd()+"/sounds/"
@@ -24,6 +27,23 @@ metadata_size = 32
 dds_header_size = 128
 wav_header_size = 72
 current_header_size = 0
+
+
+def convert_wav(wav_file):
+    with open(source_files_path+wav_file, "rb+") as w:
+        w.seek(20)
+        if not w.read(1) == b'\x01':  # if not PCM
+            exit()
+        w.seek(64)
+        if w.read(4) == b'data':
+            return
+        else:
+            w.seek(0)
+            start_of_file = w.read(36)
+            rest_of_file = w.read(os.path.getsize(source_files_path+wav_file)-w.tell())
+            padding_text = b'PAAD\x14\x00\x00\x00' + (20 * b'\x00')
+            with open(source_files_path+wav_file, "w+b") as new:
+                new.write(start_of_file + padding_text + rest_of_file)
 
 
 def get_output_dir():
@@ -190,6 +210,10 @@ def pack_files():
             level_file_list.clear()
             data_index.clear()
             level_file_list = get_level_data(radio_buttons.get())
+
+            if radio_buttons.get() == 'sounds':
+                for file in level_file_list:
+                    convert_wav(file)
 
             raw_data_bytes = construct_raw_data()
             raw_data_size = len(raw_data_bytes)
