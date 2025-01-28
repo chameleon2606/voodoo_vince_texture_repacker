@@ -1,7 +1,7 @@
 import os
 import json
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, Image, PhotoImage
 from tkinter.ttk import Progressbar
 from math import ceil
 
@@ -9,8 +9,8 @@ from math import ceil
 # todo specific error messages
 
 output_path = ""
-textures_path = os.getcwd()+"/textures/"
-sounds_path = os.getcwd()+"/sounds/"
+textures_path = os.getcwd() + "/textures/"
+sounds_path = os.getcwd() + "/sounds/"
 source_files_path = textures_path
 localpath = os.getcwd()
 level_file_list = []
@@ -30,7 +30,7 @@ current_header_size = 0
 
 
 def convert_wav(wav_file):
-    with open(source_files_path+wav_file, "rb+") as w:
+    with open(source_files_path + wav_file, "rb+") as w:
         w.seek(20)
         if not w.read(1) == b'\x01':  # if not PCM
             exit()
@@ -40,16 +40,16 @@ def convert_wav(wav_file):
         else:
             w.seek(0)
             start_of_file = w.read(36)
-            rest_of_file = w.read(os.path.getsize(source_files_path+wav_file)-w.tell())
+            rest_of_file = w.read(os.path.getsize(source_files_path + wav_file) - w.tell())
             padding_text = b'PAAD\x14\x00\x00\x00' + (20 * b'\x00')
-            with open(source_files_path+wav_file, "w+b") as new:
+            with open(source_files_path + wav_file, "w+b") as new:
                 new.write(start_of_file + padding_text + rest_of_file)
 
 
 def get_output_dir():
     global output_path
     output_path = filedialog.askdirectory()
-    if not os.path.exists(output_path+'/vincedata/'):
+    if not os.path.exists(output_path + '/vincedata/'):
         messagebox.showwarning("Error", "Invalid folder")
         return
     else:
@@ -60,26 +60,29 @@ def get_output_dir():
 
 
 def get_level_data(data):
-    with open(localpath+'/level_data.json') as f:
+    with open(localpath + '/level_data.json') as f:
         level_data = json.load(f)
         if level_data[current_level][data]:
             return level_data[current_level][data]
         else:
-            pathtext.config(text=data+" does not exist")
+            pathtext.config(text=data + " does not exist")
             exit()
 
 
 def get_level_list():
-    with open(localpath+'/level_data.json') as f:
+    with open(localpath + '/level_data.json') as f:
         return json.load(f).keys()
 
 
 def construct_header():
     header = b'HOT \x01\x00\x00\x00'
     header += (hot_header_size + len(filemetadata) + len(filename_table)).to_bytes(4, byteorder='little')
-    header += (hot_header_size + ((metadata_size * len(level_file_list)) - 8) + len(filename_table) + (dds_header_size * len(level_file_list))).to_bytes(4, byteorder='little')  # data offset
-    header += (hot_header_size + len(filemetadata) + len(filename_table) + file_headers_size + raw_data_size).to_bytes(4, byteorder='little')  # total size
-    header += (hot_header_size + len(filemetadata)).to_bytes(4, byteorder='little')  # writes the offset of the filename table
+    header += (hot_header_size + ((metadata_size * len(level_file_list)) - 8) + len(filename_table) + (
+                dds_header_size * len(level_file_list))).to_bytes(4, byteorder='little')  # data offset
+    header += (hot_header_size + len(filemetadata) + len(filename_table) + file_headers_size + raw_data_size).to_bytes(
+        4, byteorder='little')  # total size
+    header += (hot_header_size + len(filemetadata)).to_bytes(4,
+                                                             byteorder='little')  # writes the offset of the filename table
     header += (len(level_file_list).to_bytes(4, byteorder='little'))  # writes the amount of textures or sounds
     return header
 
@@ -93,16 +96,16 @@ def construct_filemetadata():
 
     for file in level_file_list:
         if file.startswith('lightmap'):
-            path = source_files_path+'lightmaps/'+current_level+'/'
+            path = source_files_path + 'lightmaps/' + current_level + '/'
         else:
             path = source_files_path
         fileinfo_table += dds_header_size.to_bytes(4, byteorder='little')  # header size
         fileinfo_table += (headers_offset + (dds_header_size * i)).to_bytes(4, byteorder='little')  # header offset
-        fileinfo_table += os.path.getsize(path+file).to_bytes(4, byteorder='little')  # file size
+        fileinfo_table += os.path.getsize(path + file).to_bytes(4, byteorder='little')  # file size
         fileinfo_table += b'\x00\x00\x00\x00'  # blank
         fileinfo_table += (data_offset + data_index[i]).to_bytes(4, byteorder='little')  # file offset
         fileinfo_table += b'\x00\x00\x00\x00'  # blank
-        if i < len(level_file_list)-1:
+        if i < len(level_file_list) - 1:
             fileinfo_table += int(mystery_number_array[i]).to_bytes(4, byteorder='little')  # unknown number
             fileinfo_table += b'\x00\x00\x00\x00'  # blank
             i += 1
@@ -118,7 +121,7 @@ def construct_filenames():
             byte_padding = 4
         else:
             byte_padding = filename_byte_remainder
-        file_name_table += bytes(file, "utf-8")+(b'\x00'*byte_padding)
+        file_name_table += bytes(file, "utf-8") + (b'\x00' * byte_padding)
 
     offset = hot_header_size + ((metadata_size * len(level_file_list)) - 8) + len(file_name_table)
     file_name_table += b'\x00' * ((ceil(offset / 128) * 128) - offset)
@@ -130,10 +133,10 @@ def construct_file_headers():
     i = 0
     for file in level_file_list:
         if file.startswith('lightmap'):
-            path = source_files_path+'lightmaps/'+current_level+'/'
+            path = source_files_path + 'lightmaps/' + current_level + '/'
         else:
             path = source_files_path
-        with open(path+file, "rb") as src_file:
+        with open(path + file, "rb") as src_file:
             file_header_table += src_file.read(dds_header_size)
             i += 1
 
@@ -150,9 +153,9 @@ def construct_raw_data():
         current_file_text.config(text=file)  # shows what texture or sound is being processed
         root.update()
         if file.startswith('lightmap'):
-            src_file_path = source_files_path+'lightmaps/'+current_level+'/'+file
+            src_file_path = source_files_path + 'lightmaps/' + current_level + '/' + file
         else:
-            src_file_path = source_files_path+file
+            src_file_path = source_files_path + file
         with open(src_file_path, "rb") as src_file:
             src_file.seek(dds_header_size)
             data_index.append(len(raw_data))
@@ -210,7 +213,7 @@ def pack_files():
         # if not os.path.exists(output_path+get_level_data('path')):
         #     os.makedirs(output_path+get_level_data('path'))
 
-        with open(output_path+get_level_data('path')+radio_buttons.get()+".hot", "w+b") as t:
+        with open(output_path + get_level_data('path') + radio_buttons.get() + ".hot", "w+b") as t:
 
             level_file_list.clear()
             data_index.clear()
@@ -223,7 +226,7 @@ def pack_files():
             raw_data_bytes = construct_raw_data()
             raw_data_size = len(raw_data_bytes)
             filename_table = construct_filenames()
-            t.write(b'\x00'*hot_header_size)  # placeholder for main header
+            t.write(b'\x00' * hot_header_size)  # placeholder for main header
             filemetadata = construct_filemetadata()
             t.write(filemetadata)  # writes file info tables
             t.write(filename_table)  # writes filenames table
@@ -236,7 +239,8 @@ def pack_files():
             t.seek(0)
             t.write(header_bytes)  # writes header
 
-            print(area + " " + radio_buttons.get() + " created with " + str(len(level_file_list)) + " "+radio_buttons.get())
+            print(area + " " + radio_buttons.get() + " created with " + str(
+                len(level_file_list)) + " " + radio_buttons.get())
             levelprogress['value'] += 1
 
     pack_button['state'] = tk.ACTIVE
@@ -253,9 +257,10 @@ def pack_files():
 root = tk.Tk()
 width = 400
 height = 300
-root.geometry(str(width)+"x"+str(height))
+root.geometry(str(width) + "x" + str(height))
 root.title("Chameleon's textures and sounds Repacker")
-
+photo = PhotoImage(file=textures_path+"zgcvinceheadicon.png")
+root.wm_iconphoto(False, photo)
 
 path_button = tk.Button(root, text="choose game folder..", command=get_output_dir)
 radio_buttons = tk.StringVar(value='textures')
@@ -266,7 +271,7 @@ pack_button = tk.Button(root, text="Repack", command=pack_files)
 pack_button['state'] = tk.DISABLED
 leveltext = tk.Label(root, text="")
 current_file_text = tk.Label(root, text="")
-levelprogress = Progressbar(root, orient=tk.HORIZONTAL, length=width/2)
+levelprogress = Progressbar(root, orient=tk.HORIZONTAL, length=width / 2)
 fileprogress = Progressbar(root, orient=tk.HORIZONTAL, length=width / 2)
 spacer = tk.Label(root, text="")
 
