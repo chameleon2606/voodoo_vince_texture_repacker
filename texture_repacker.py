@@ -62,7 +62,11 @@ def get_output_dir():
 def get_level_data(data):
     with open(localpath+'/level_data.json') as f:
         level_data = json.load(f)
-        return level_data[current_level][data]
+        if level_data[current_level][data]:
+            return level_data[current_level][data]
+        else:
+            pathtext.config(text=data+" does not exist")
+            exit()
 
 
 def get_level_list():
@@ -163,7 +167,6 @@ def selection_changed():
     global current_header_size
     global source_files_path
     global mystery_numbers
-    print(radio_buttons.get())
     if radio_buttons.get() == 'textures':
         current_header_size = dds_header_size
         source_files_path = textures_path
@@ -184,6 +187,8 @@ def pack_files():
 
     pack_button['state'] = tk.DISABLED
     path_button['state'] = tk.DISABLED
+    r1['state'] = tk.DISABLED
+    r2['state'] = tk.DISABLED
     levelprogress.config(maximum=get_level_list().__len__())
 
     if not os.path.exists(textures_path) and radio_buttons.get() == 'textures':
@@ -236,6 +241,8 @@ def pack_files():
 
     pack_button['state'] = tk.ACTIVE
     path_button['state'] = tk.ACTIVE
+    r1['state'] = tk.ACTIVE
+    r2['state'] = tk.ACTIVE
     levelprogress['value'] = 0
     fileprogress['value'] = 0
     leveltext.config(text="Done!")
