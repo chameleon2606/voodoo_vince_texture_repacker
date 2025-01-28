@@ -192,7 +192,11 @@ def pack_files():
     path_button['state'] = tk.DISABLED
     r1['state'] = tk.DISABLED
     r2['state'] = tk.DISABLED
-    levelprogress.config(maximum=get_level_list().__len__())
+
+    if radio_buttons.get() == 'textures':
+        levelprogress.config(maximum=len(get_level_list())-6)
+    else:
+        levelprogress.config(maximum=len(get_level_list()))
 
     if not os.path.exists(textures_path) and radio_buttons.get() == 'textures':
         messagebox.showwarning("Error", "Textures folder not found!")
